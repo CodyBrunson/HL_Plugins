@@ -1,0 +1,19 @@
+{
+  "name": "EntityHighlight",
+  "packageManager": "yarn@4.9.1",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "main": "src/EntityHighlight.ts",
+  "devDependencies": {
+    "@highlite/plugin-api": "^1.0.5",
+    "esbuild": "^0.25.8",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^8.17.1"
+  }
+}

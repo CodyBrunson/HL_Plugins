@@ -1,0 +1,16 @@
+{
+  "name": "hl_plugins",
+  "author": "Tomb",
+  "license": "LGPL-3.0-or-later",
+  "private": true,
+  "workspaces": [
+    "*"
+  ],
+  "scripts": {
+    "build-all": "yarn workspaces foreach --all run build && rimraf dist && mkdir dist && find . -mindepth 2 -maxdepth 2 -type d -name dist -exec cp -r {}/* dist \\;"
+  },
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  }
+}
