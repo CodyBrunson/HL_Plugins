@@ -466,12 +466,14 @@ class DropLog extends Plugin {
         header.className = 'drop-log-header';
 
         const filteredCount = this.getFilteredData().length;
+        //Since technically a null/undefined value can (shouldn't anymore?) get inside the data table, this will allow the plugin to
+        //Write to the HTML anyway.
         header.innerHTML = `
             <h3>Drop Log</h3>
             <div class="drop-log-stats">
                 <span>Total NPCs: ${this.data.dropData.size}</span>
                 <span>Showing: ${filteredCount}</span>
-                <span>Total Kills: ${Array.from(Object.values(this.data.dropData)).reduce((sum, data) => sum + data.killCount, 0)}</span>
+                <span>Total Kills: ${Array.from(Object.values(this.data.dropData)).reduce((sum, data) => sum + data?.killCount || 0, 0)}</span>
             </div>
         `;
         this.panelContent.appendChild(header);
@@ -538,7 +540,8 @@ class DropLog extends Plugin {
 
     private removeNPCFromLog(defId: number): void {
         if (this.data.dropData[defId]) {
-            this.data.dropData[defId] = undefined;
+            delete this.data.dropData[defId]; //We don't want to set the entry to undefined because if they kill that npc in the future, it'll bug out.
+            //We just want to delete the entry since that's what the person is expecting anyway.
             this.updatePanelContent();
         }
     }
@@ -547,11 +550,19 @@ class DropLog extends Plugin {
 
         this.ensureObjectStore();
 
-        const allData = Array.from(Object.entries(this.data.dropData));
-
+        const uncleanData = Array.from(Object.entries(this.data.dropData));
+        const allData = uncleanData.filter(item => item[1] !== null);
+        this.log(allData);
         if (!this.searchQuery) {
             return allData.sort(
-                ([, a], [, b]) => b.lastUpdated - a.lastUpdated
+                ([, a], [, b]) => {
+                    //If the player manages to get a null/undefined value in the table, this will make the code work anyway.
+                    // A 'clear database' will clean these up.
+                    if(!a || !b) {
+                        return 0;
+                    }
+                    return b.lastUpdated - a.lastUpdated
+                }
             );
         }
 
@@ -573,7 +584,12 @@ class DropLog extends Plugin {
 
                 return false;
             })
-            .sort(([, a], [, b]) => b.lastUpdated - a.lastUpdated);
+            .sort(([, a], [, b]) => {
+                if(!a || !b) {
+                    return 0;
+                }
+                return b.lastUpdated - a.lastUpdated
+            });
     }
     private updateVirtualList(): void {
         if (!this.virtualScrollContent || !this.virtualScrollContainer) return;
@@ -726,9 +742,9 @@ class DropLog extends Plugin {
             return false;
         }
     }
-    private async clearDatabase(): Promise<void> {
+    private clearDatabase(): void {
         try {
-            if (!(await this.ensureObjectStore())) return;
+            if (!(this.ensureObjectStore())) return;
 
             this.data.dropTable = {};
 
