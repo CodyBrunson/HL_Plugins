@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes,PanelManager,DatabaseManager} from "@highlite/plugin-api";
+import {Plugin, SettingsTypes,PanelManager} from "@highlite/plugin-api";
 
 interface TrackedNPC {
     entityId: number;
@@ -30,12 +30,11 @@ interface NPCKillData {
     lastUpdated: number;
 }
 
-class DropLog extends Plugin {
+export default class DropLog extends Plugin {
     pluginName = 'Drop Log';
     author = 'JayArrowz & Tomb & 0rangeYouGlad';
     private panelManager: PanelManager = new PanelManager();
     private panelContent: HTMLElement | null = null;
-    private isLoggedIn = false;
 
     private attackedNPCs: Set<number> = new Set();
     private npcDataCache: Map<number, any> = new Map(); // entityId -> npc data when first tracked
@@ -84,25 +83,21 @@ class DropLog extends Plugin {
     }
 
     start(): void {
-        if (!this.settings.enabled?.value) {
-            return;
-        }
-
         if(!this.data.dropData) {
             this.data.dropData = {};
         }
 
-        this.isLoggedIn = true;
-
         this.createPanel();
         this.addCSSStyles();
+
+        if (this.panelContent) {
+            this.updatePanelContent();
+        }
     }
 
     init(): void {}
 
     GameLoop_update(): void {
-        if (!this.settings.enabled?.value || !this.isLoggedIn) return;
-
         this.trackCurrentTarget();
         this.checkForDeaths();
         this.checkForDrops();
@@ -345,22 +340,22 @@ class DropLog extends Plugin {
 
     private recordDrop(npc: TrackedNPC, item: any): void {
         try {
-            this.log('recordDrop', npc, item);
-            if (!this.data.dropData[npc.defId]) {
-                this.data.dropData[npc.defId] = {
-                    name: npc.name,
-                    killCount: 0,
-                    drops: {},
-                    lastUpdated: Date.now(),
-                };
-            }
+            // this.log('recordDrop', npc, item);
+            // if (!this.data.dropData[npc.defId]) {
+            //     this.data.dropData[npc.defId] = {
+            //         name: npc.name,
+            //         killCount: 0,
+            //         drops: {},
+            //         lastUpdated: Date.now(),
+            //     };
+            // }
             const deathKey = `${npc.entityId}_${npc.deathTime}`;
             if (!this.processedDeaths.has(deathKey)) {
                 const oldCount = this.data.dropData[npc.defId].killCount;
                 this.data.dropData[npc.defId].killCount++;
-                this.log(
-                    `Incrementing kill count for ${npc.name} (defId: ${npc.defId}) from ${oldCount} to ${this.data.dropData[npc.defId].killCount}`
-                );
+                // this.log(
+                //     `Incrementing kill count for ${npc.name} (defId: ${npc.defId}) from ${oldCount} to ${this.data.dropData[npc.defId].killCount}`
+                // );
                 this.processedDeaths.add(deathKey);
             }
             const itemId = item._def?._id || item._entityTypeId;
@@ -369,7 +364,7 @@ class DropLog extends Plugin {
                 item._def?._name ||
                 `Item ${itemId}`;
             const quantity = item._amount || 1;
-            this.log("Above killData.drops check: ", this.data.dropData[npc.defId]);
+
             if (!this.data.dropData[npc.defId].drops[itemId]) {
                 this.data.dropData[npc.defId].drops[itemId] = {
                     name: itemName,
@@ -377,11 +372,9 @@ class DropLog extends Plugin {
                     totalDropped: 0,
                 };
             }
-            this.log("After killdata.Drops check");
             this.data.dropData[npc.defId].drops[itemId].quantity += quantity;
             this.data.dropData[npc.defId].drops[itemId].totalDropped++;
             this.data.dropData[npc.defId].lastUpdated = Date.now();
-            this.log("After increasing killData.drops")
 
             this.updatePanelContent();
         } catch (error) {
@@ -415,9 +408,9 @@ class DropLog extends Plugin {
 
                     const oldCount = this.data.dropData[trackedNPC.defId].killCount;
                     this.data.dropData[trackedNPC.defId].killCount++;
-                    this.log(
-                        `Incrementing kill count (timeout) for ${trackedNPC.name} (defId: ${trackedNPC.defId}) from ${oldCount} to ${this.data.dropData[trackedNPC.defId].killCount}`
-                    );
+                    // this.log(
+                    //     `Incrementing kill count (timeout) for ${trackedNPC.name} (defId: ${trackedNPC.defId}) from ${oldCount} to ${this.data.dropData[trackedNPC.defId].killCount}`
+                    // );
                     this.data.dropData[trackedNPC.defId].lastUpdated = Date.now();
                     this.processedDeaths.add(deathKey);
                 }
@@ -466,12 +459,13 @@ class DropLog extends Plugin {
         header.className = 'drop-log-header';
 
         const filteredCount = this.getFilteredData().length;
+        const dropDataLength = this.data.dropData ? Object.keys(this.data.dropData).length : 0;
         //Since technically a null/undefined value can (shouldn't anymore?) get inside the data table, this will allow the plugin to
         //Write to the HTML anyway.
         header.innerHTML = `
             <h3>Drop Log</h3>
             <div class="drop-log-stats">
-                <span>Total NPCs: ${this.data.dropData.size}</span>
+                <span>Total NPCs: ${dropDataLength}</span>
                 <span>Showing: ${filteredCount}</span>
                 <span>Total Kills: ${Array.from(Object.values(this.data.dropData)).reduce((sum, data) => sum + data?.killCount || 0, 0)}</span>
             </div>
@@ -552,7 +546,7 @@ class DropLog extends Plugin {
 
         const uncleanData = Array.from(Object.entries(this.data.dropData));
         const allData = uncleanData.filter(item => item[1] !== null);
-        this.log(allData);
+
         if (!this.searchQuery) {
             return allData.sort(
                 ([, a], [, b]) => {
@@ -684,11 +678,11 @@ class DropLog extends Plugin {
             );
         }
 
-        this.log("Sorted drops: " + JSON.stringify(sortedDrops));
+        //this.log("Sorted drops: " + JSON.stringify(sortedDrops));
 
         for (const [itemId, dropData] of sortedDrops) {
 
-            this.log("Creating entry for sorted drop: " + JSON.stringify(itemId) + " " + JSON.stringify(dropData));
+            //this.log("Creating entry for sorted drop: " + JSON.stringify(itemId) + " " + JSON.stringify(dropData));
 
             const dropItem = document.createElement('div');
             dropItem.className = 'drop-log-drop-item';
@@ -1049,18 +1043,7 @@ class DropLog extends Plugin {
         this.processedDeaths.clear();
     }
 
-    SocketManager_loggedIn(): void {
-        this.isLoggedIn = true;
-        if (!this.settings.enabled?.value) return;
-
-        if (this.panelContent) {
-            this.updatePanelContent();
-        }
-    }
-
-    SocketManager_handleLoggedOut(): void {
-        this.isLoggedIn = false;
-
+    stop(): void {
         for (const entityId of this.npcHealthTrackers.keys()) {
             this.cleanupHealthTracker(entityId);
         }
@@ -1076,9 +1059,7 @@ class DropLog extends Plugin {
         if (this.panelContent) {
             this.updatePanelContent();
         }
-    }
 
-    stop(): void {
         try {
             this.panelManager.removeMenuItem('📋');
         } catch (error) {}
@@ -1087,11 +1068,5 @@ class DropLog extends Plugin {
         if (style) {
             style.remove();
         }
-        this.isLoggedIn = false;
     }
-}
-var DropLog_default = DropLog;
-export {
-    DropLog,
-    DropLog_default as default
 }

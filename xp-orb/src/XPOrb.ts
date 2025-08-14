@@ -15,7 +15,7 @@ interface XPDrop {
     element: HTMLDivElement;
 }
 
-class XPOrb extends Plugin {
+export default class XPOrb extends Plugin {
     pluginName = 'XP Orb';
     author = 'JayArrowz & Tomb';
 
@@ -78,13 +78,10 @@ class XPOrb extends Plugin {
 
     start(): void {
         this.log('Started XP Orb');
-        this.log('Player logged in, setting up XP tracking');
-        setTimeout(() => {
-            this.loadTotalXP();
-            this.loadSessionXPFromDatabase();
-            this.setupXPTracking();
-            this.createXPTrackerUI();
-        }, 500);
+        this.loadTotalXP();
+        this.loadSessionXPFromDatabase();
+        this.setupXPTracking();
+        this.createXPTrackerUI();
     }
 
     stop(): void {
@@ -94,8 +91,21 @@ class XPOrb extends Plugin {
     }
 
     GameLoop_update(): void {
-        if (!this.settings.enable.value) return;
-        this.updateXPDrops();
+        if(this.settings.enable.value) {
+            this.loadTotalXP();
+            this.loadSessionXPFromDatabase();
+            this.updateXPDrops();
+            this.checkForWastesIcon();
+        }
+    }
+
+    private checkForWastesIcon(): void {
+        const wastesIcon = document.querySelector('#hs-wilderness-icon');
+        if (wastesIcon && this.totalXPDisplay) {
+            this.totalXPDisplay.style.right = '285px';
+        } else if(this.totalXPDisplay) {
+            this.totalXPDisplay.style.right = '250px';
+        }
     }
 
     private loadTotalXP(): void {
@@ -104,6 +114,7 @@ class XPOrb extends Plugin {
         const skillsXP =
             this.gameHooks.EntityManager?.Instance?.MainPlayer?._skills?.TotalXP;
         this.totalXP = combatXP + skillsXP;
+        this.updateTotalXPDisplay();
     }
 
     private createXPTrackerUI(): void {
@@ -497,20 +508,8 @@ class XPOrb extends Plugin {
             }
         }
 
-        // if (this.xpDropsContainer) {
-        //     this.xpDropsContainer.style.display = this.isOrbOpen
-        //         ? 'block'
-        //         : 'none';
-        // }
-        //
-        // if (!this.isOrbOpen) {
-        //     this.activeXPDrops.forEach(drop => drop.element.remove());
-        //     this.activeXPDrops = [];
-        // }
-
         this.updateXPOrbDisplay();
         this.updateSessionXPVisibility();
-        //this.updateTotalXPPosition();
     }
 
     private toggleXPTracker(): void {
@@ -547,18 +546,6 @@ class XPOrb extends Plugin {
             <div style="font-size: 8px; opacity: 0.8;">Session</div>
             <div>${this.formatNumber(this.sessionXP)} XP</div>
         `;
-    }
-
-    private updateTotalXPPosition(): void {
-        if (!this.totalXPDisplay) return;
-
-        if(!this.isOrbOpen) {
-            this.totalXPDisplay.style.right = '155%';
-            this.totalXPDisplay.style.top = '-260%';
-        } else {
-            this.totalXPDisplay.style.right = '100%';
-            this.totalXPDisplay.style.top = '-162%';
-        }
     }
 
     private updateTotalXPDisplay(): void {
@@ -622,6 +609,9 @@ class XPOrb extends Plugin {
         if (this.xpOrbContainer && this.xpOrbContainer.parentNode) {
             this.xpOrbContainer.parentNode.removeChild(this.xpOrbContainer);
         }
+        if(this.totalXPDisplay) {
+            this.totalXPDisplay.remove();
+        }
 
         this.activeXPDrops.forEach(drop => {
             if (drop.element && drop.element.parentNode) {
@@ -635,12 +625,17 @@ class XPOrb extends Plugin {
         this.totalXPDisplay = null;
         this.sessionXPDisplay = null;
         this.activeXPDrops = [];
+        this.skillXPData.clear();
     }
 
     private cleanup(): void {
         this.log('cleanup called - clearing all data');
         if (this.xpOrbContainer && this.xpOrbContainer.parentNode) {
             this.xpOrbContainer.parentNode.removeChild(this.xpOrbContainer);
+        }
+
+        if(this.totalXPDisplay) {
+            this.totalXPDisplay.remove();
         }
 
         this.activeXPDrops.forEach(drop => {
@@ -659,9 +654,4 @@ class XPOrb extends Plugin {
         this.skillXPData.clear();
         this.totalXP = 0;
     }
-}
-var XPOrb_default = XPOrb;
-export {
-    XPOrb,
-    XPOrb_default as default,
 }
