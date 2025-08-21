@@ -27,7 +27,7 @@ export default class IdleOverlay {
     }
 
     /** Sets the background color to the HighLite CSS variable '--theme-danger' at 30% alpha */
-    public updateBackgroundColor() {
+    private updateBackgroundColor() {
         const rootStyles = getComputedStyle(document.documentElement);
         const dangerColor = rootStyles.getPropertyValue("--theme-danger").trim();
         // Set the background-color. Falls back to default the variable is somehow undefined
