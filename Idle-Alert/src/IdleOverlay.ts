@@ -30,7 +30,8 @@ export default class IdleOverlay {
     public updateBackgroundColor() {
         const rootStyles = getComputedStyle(document.documentElement);
         const dangerColor = rootStyles.getPropertyValue("--theme-danger").trim();
-        this.overlay.style.backgroundColor = this.hexToRgba(dangerColor, 0.3);
+        // Set the background-color. Falls back to default the variable is somehow undefined
+        this.overlay.style.backgroundColor = this.hexToRgba(dangerColor || "#ef4444", 0.3);
     }
 
     /** Convert a hex color to an RGBA color */
