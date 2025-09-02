@@ -67,8 +67,8 @@ export default class XPOrb extends Plugin {
             type: SettingsTypes.button,
             value: '',
             callback: () => {
-                    this.resetSessionXP();
-                    },
+                this.resetSessionXP();
+            },
         };
     }
 
