@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes} from "@highlite/plugin-api";
+import {Plugin, SettingsTypes} from "@highlite/core";
 import bankIcon from "../resources/images/Bank_icon.png";
 import anvilIcon from "../resources/images/Anvil_icon.png";
 import furnaceIcon from "../resources/images/Furnace_icon.png";

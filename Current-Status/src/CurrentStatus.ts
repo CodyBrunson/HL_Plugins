@@ -1,4 +1,4 @@
-import { Plugin,UIManager, UIManagerScope, ActionState } from '@highlite/plugin-api';
+import { Plugin,UIManager, UIManagerScope, ActionState } from '@highlite/core';
 
 // display the current status of the player
 class CurrentStatus extends Plugin {

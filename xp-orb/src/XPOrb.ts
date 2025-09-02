@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes} from "@highlite/plugin-api";
+import {Plugin, SettingsTypes} from "@highlite/core";
 
 interface SkillXPData {
     skillId: number;
@@ -17,7 +17,7 @@ interface XPDrop {
 
 export default class XPOrb extends Plugin {
     pluginName = 'XP Orb';
-    author = 'JayArrowz & Tomb';
+    author = 'Highlite';
 
     private xpOrbContainer: HTMLDivElement | null = null;
     private xpOrbElement: HTMLDivElement | null = null;
@@ -65,7 +65,7 @@ export default class XPOrb extends Plugin {
         this.settings.resetSessionXP = {
             text: 'Reset Session XP',
             type: SettingsTypes.button,
-            value: false,
+            value: '',
             callback: () => {
                     this.resetSessionXP();
                     },
@@ -92,8 +92,6 @@ export default class XPOrb extends Plugin {
 
     GameLoop_update(): void {
         if(this.settings.enable.value) {
-            this.loadTotalXP();
-            this.loadSessionXPFromDatabase();
             this.updateXPDrops();
             this.checkForWastesIcon();
         }
@@ -127,7 +125,7 @@ export default class XPOrb extends Plugin {
         this.xpOrbContainer.style.position = 'absolute';
 
         this.xpOrbContainer.style.top =
-            'calc(var(--hs-compass-button-top) + var(--hs-action-menu-item-width) + 25px)';
+            'calc(var(--hs-compass-button-top) + var(--hs-action-menu-item-width) + 10px)';
         this.xpOrbContainer.style.right =
             'calc(var(--hs-compass-button-right) + 6px)';
         this.xpOrbContainer.style.zIndex = '9999';
@@ -588,7 +586,7 @@ export default class XPOrb extends Plugin {
         try {
             this.sessionXP = this.data.sessionXP.xp | 0;
             this.updateSessionXPDisplay();
-            this.log(`Loaded session XP from database: ${this.sessionXP}`);
+            //this.log(`Loaded session XP from database: ${this.sessionXP}`);
         } catch (error) {
             console.error('Error loading session XP from database:', error);
         }
@@ -653,5 +651,6 @@ export default class XPOrb extends Plugin {
         this.activeXPDrops = [];
         this.skillXPData.clear();
         this.totalXP = 0;
+        this.sessionXP = 0;
     }
 }

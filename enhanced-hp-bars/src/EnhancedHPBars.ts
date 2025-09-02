@@ -1,4 +1,4 @@
-import {Plugin} from "@highlite/plugin-api";
+import {Plugin} from "@highlite/core";
 
 class EnhancedHPBars extends Plugin {
     pluginName = 'Enhanced HP Bars';

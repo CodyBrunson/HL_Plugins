@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes} from "@highlite/plugin-api";
+import {Plugin, SettingsTypes} from "@highlite/core";
 import placeholderPng from '../resources/images/placeholder.png'
 import northArrowPng from '../resources/images/north-arrow.png'
 
