@@ -1,4 +1,4 @@
-import { Plugin,PanelManager } from '@highlite/plugin-api';
+import { Plugin,PanelManager } from '@highlite/core';
 
 class DefinitionsPanel extends Plugin {
     pluginName = 'Definitions Panel';

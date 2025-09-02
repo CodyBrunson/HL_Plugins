@@ -1,4 +1,4 @@
-import { Plugin,SettingsTypes, UIManager } from '@highlite/plugin-api';
+import { Plugin,SettingsTypes, UIManager } from '@highlite/core';
 // import baseCSS from '../resources/css/base.css'
 /**
  * ChatItemTooltip plugin

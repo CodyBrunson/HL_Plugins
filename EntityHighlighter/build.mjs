@@ -9,7 +9,7 @@ await esbuild.build({
   outExtension: { '.js': '.js' },
   outdir: 'dist',
   format: 'esm',
-  external: ['@babylonjs/core', '@highlite/plugin-api'],
+  external: ['@babylonjs/core', '@highlite/core'],
   loader: {
     '.html': 'text',
     '.css': 'text',

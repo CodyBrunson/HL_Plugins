@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes,PanelManager} from "@highlite/plugin-api";
+import {Plugin, SettingsTypes,PanelManager} from "@highlite/core";
 
 interface TrackedNPC {
     entityId: number;

@@ -1,4 +1,4 @@
-import {Plugin, SettingsTypes,NotificationManager, SoundManager, ActionState } from "@highlite/plugin-api";
+import {Plugin, SettingsTypes,NotificationManager, SoundManager, ActionState } from "@highlite/core";
 import IdleOverlay from "./IdleOverlay";
 import idleSound from "../resources/sounds/idle_alert.mp3";
 

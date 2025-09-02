@@ -1,4 +1,4 @@
-﻿import {UIManager, UIManagerScope} from "@highlite/plugin-api";
+﻿import {UIManager, UIManagerScope} from "@highlite/core";
 
 
 export default class IdleOverlay {
