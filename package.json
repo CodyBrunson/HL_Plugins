@@ -7,13 +7,14 @@
     "*"
   ],
   "scripts": {
-    "build-all": "yarn workspaces foreach --all run build && shx rm -rf dist && shx mkdir dist && shx cp -r \"./*/dist/*\" dist"
+    "build-all": "yarn workspaces foreach --all run build && rm -rf dist && mkdir dist && find . -mindepth 2 -maxdepth 2 -type d -name dist -exec bash -c 'cp -v \"$0\"/* dist/' {} \\;"
   },
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "rimraf": "^6.0.1"
   },
   "dependencies": {
-    "@highlite/core": "^2.1.1"
+    "@highlite/core": "^2.1.1",
+    "shx": "^0.4.0"
   }
 }

@@ -1,0 +1,99 @@
+.treasure-info-container {
+    position: absolute;
+    top: 35px;
+    left: 10px;
+    width: 194px;
+    height: 216px;
+    background-color: rgba(0, 0, 0, 0.2); /* semi-transparent black */
+    border: 2px solid #ffd700;
+    border-radius: 4px;
+    color: limegreen; /* text color */
+    display: flex; /* makes centering easier */
+    align-items: center; /* vertical center */
+    justify-content: center; /* horizontal center */
+}
+
+.map-button {
+    position: absolute;
+    border: 2px solid #ffd700;
+    border-radius: 4px;
+    top: 1px !important;
+    width: 190px !important;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ffd700;
+}
+
+.map-button:hover {
+    cursor: pointer;
+}
+
+.treasure-map-info {
+    position: absolute;
+    width: 180px;
+    height: 90px;
+    top: 24px;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+    border: 2px solid #ffd700;
+    border-radius: 4px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start !important; /* This will left-align all child items by default */
+    padding-left: 5px; /* Add some padding to prevent text from touching the edge */
+    gap: 4px !important;
+}
+
+.treasure-map-info-label { /* This is your title label */
+    color: #ffd700;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    margin-top: 5px;
+    align-self: center; /* This overrides the parent's alignment for this specific item */
+}
+
+.treasure-map-data-label { /* This is for your subsequent data labels */
+    color: #ffd700;
+    font-size: 0.75rem !important;
+    font-weight: normal !important;
+    /* This item will automatically be left-aligned due to the parent's align-items: flex-start; */
+}
+
+.treasure-map-info::before {
+    content: none !important;
+}
+
+
+.player-info {
+    position: absolute;
+    width: 180px;
+    height: 90px;
+    top: 120px;
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+    border: 2px solid #ffd700;
+    border-radius: 4px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start !important; /* This will left-align all child items by default */
+    padding-left: 5px; /* Add some padding to prevent text from touching the edge */
+    gap: 4px !important;
+}
+
+.player-info-label { /* This is your title label */
+    color: #ffd700;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    margin-top: 5px;
+    align-self: center; /* This overrides the parent's alignment for this specific item */
+}
+
+.player-data-label { /* This is for your subsequent data labels */
+    color: #ffd700;
+    font-size: 0.75rem !important;
+    font-weight: normal !important;
+    /* This item will automatically be left-aligned due to the parent's align-items: flex-start; */
+}
+
+.player-info::before {
+    content: none !important;
+}
